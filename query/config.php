@@ -1,19 +1,19 @@
 <?php
 
-  include(dirname(__FILE__)."/../admin/config.php");
+include(dirname(__FILE__)."/../admin/config.php");
 
-  define( 'DB_USER', $config["mysql_conn_user"] );
-  define( 'DB_PASS', $config["mysql_conn_pass"] );
-  define( 'DB_NAME', $config["mysql_conn_db"] );
+define( 'DB_USER', $config["mysql_conn_user"] );
+define( 'DB_PASS', $config["mysql_conn_pass"] );
+define( 'DB_NAME', $config["mysql_conn_db"] );
 
-  define( 'TABLE_RAWDATA', $config["mysql_table_rawdata"] );
-  define( 'TABLE_SEARCH', $config["mysql_table_search"] );
+define( 'TABLE_RAWDATA', $config["mysql_table_rawdata"] );
+define( 'TABLE_SEARCH', $config["mysql_table_search"] );
 
-  define( 'WEB_ROOT', 'http://localhost/jPeople/');
+define( 'WEB_ROOT', 'http://localhost/jPeople/');
 
-  require_once 'class.Search.php';
+require_once 'class.Search.php';
 
-  dbConnect( DB_USER, DB_PASS, DB_NAME );
+dbConnect( DB_USER, DB_PASS, DB_NAME );
 
   /******************
   ******* URLS ******
@@ -34,11 +34,6 @@
   function flagURL( $country ){
     $country = str_replace( " ", '%20', $country );
     return "http://swebtst01.public.jacobs-university.de/jPeople/embed_assets/flags/$country.png";
-  }
-
-  function flag_small_url( $country ){
-    $country = str_replace( " ", '_', $country );
-    return WEB_ROOT . "images/flags/$country.png";
   }
 
   /******************
@@ -68,22 +63,22 @@
     'wwwhomepage'                 => 'www',
     'jpegphoto'                   => 'photo',
     'deptInfo'                    => 'deptinfo'
+    );
+
+$search = array(
+  'eid', 'employeetype', 'account', 'attributes', 'fname', 'lname', 'birthday', 'country', 'college',
+  'majorlong', 'majorinfo', 'room', 'phone', 'email', 'description', 'title', 'office', 'deptinfo'
   );
 
-  $search = array(
-    'eid', 'employeetype', 'account', 'attributes', 'fname', 'lname', 'birthday', 'country', 'college',
-    'majorlong', 'majorinfo', 'room', 'phone', 'email', 'description', 'title', 'office', 'deptinfo'
+$search_query = array(
+  'fname', 'lname', 'college', 'room', 'phone', 'country',
+  'major', 'birthday', 'year', 'status'
   );
 
-  $search_query = array(
-    'fname', 'lname', 'college', 'room', 'phone', 'country',
-    'major', 'birthday', 'year', 'status'
-  );
-
-  $searchable_columns = array(
-    'employeetype', 'account', 'attributes', 'fname', 'lname', 'birthday', 'country',
-    'college', 'majorlong', 'majorinfo', 'room', 'phone', 'description',
-    'title', 'office', 'deptinfo', 'major', 'block', 'floor', 'email', 'year', 'status'
+$searchable_columns = array(
+  'employeetype', 'account', 'attributes', 'fname', 'lname', 'birthday', 'country',
+  'college', 'majorlong', 'majorinfo', 'room', 'phone', 'description',
+  'title', 'office', 'deptinfo', 'major', 'block', 'floor', 'email', 'year', 'status'
   );
 
   /******************
@@ -134,85 +129,6 @@
   ******************/
 
   $Search = new Search( $searchable_columns );
-  $Search->addHook( 'parse_after', 'courses', 'SearchHook_courses_parse' );
-  $Search->addHook( 'getQuery_after', 'courses', 'SearchHook_courses_getQuery' );
-
-  function SearchHook_courses_getQuery( &$Sender, &$strict, &$ambiguous, &$raw ){
-    $data = $Sender->getHookData( 'courses/parse' );
-    if( $data && strpos( $data['query'], 'IN ()' ) === false ){
-      $raw .= ( strlen($raw) > 2 ? ' AND ' : '' );
-      $raw .= " ".$data['query'];
-    }
-  }
-
-  function SearchHook_courses_parse( &$Sender, array &$tokens ){
-
-    if( isset($tokens['strict']['course']) ){
-      $q = "SELECT id,number,name FROM Courses WHERE ";
-      $restrictions = array();
-      foreach( $tokens['strict']['course'] as $v ){
-        foreach( $v as $val ){
-          $restrictions[] = " name LIKE '%$val%'";
-        }
-      }
-      $q .= implode(' OR ', $restrictions );
-      $q = mysql_query( $q );
-      $courses  = array();
-      $students = array();
-      while( $r = mysql_fetch_assoc( $q ) ){
-        if( isset( $courses[ $r['name'] ] ) ){
-          continue;
-        }
-        $students[ $r['name'] ] = getStudentsByCourse( $r['id'] );
-        //$students['_fromCourse'] = $r['name'];
-        $courses[ $r['name'] ] = $r;
-        $courses[ $r['name'] ]['_students'] = $students;
-      }
-
-      $coursesKeys  = array_keys( $courses );
-      $fullNameArr  = array();
-      foreach( $tokens['strict']['course'] as $k => $v ){
-        $fullNameArr[ $k ] = array();
-        foreach( $v as $k => $val ){
-          foreach( $coursesKeys as $c ){
-
-          }
-        }
-      }
-
-      $and = array();
-      foreach( $tokens['strict']['course'] as $k => $v ){
-        $or = array();
-        foreach( $v as $k2 => $val ){
-          $or = array_merge( $or, getStudentsEids( $students, $val ) );
-        }
-        $or = array_unique( $or );
-        $and[] = "eid IN (".implode(', ', $or).")";
-      }
-      $query = count($and) > 0 ? implode( ' AND ', $and ) : '';
-
-      $Sender->setHookData( 'courses/parse', array(
-        'query' => $query
-      ));
-      unset( $tokens['strict']['course'] );
-    }
-
-  }
 
 
-  function getStudentsEids( $students, $course ){
-    $ids = array();
-    foreach( $students as $k => $v ){
-      if( stripos( $k, $course ) !== false ){
-        foreach( $v as $st ){
-          $ids[ $st['eid'] ] = true;
-        }
-      }
-    }
-    $ids = array_keys( $ids );
-
-    return $ids;
-  }
-
-
-?>
+  ?>

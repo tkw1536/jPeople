@@ -32,7 +32,6 @@ define('MIN_LIMIT', $config["min_query_limit"]);
           foreach ($records as $key => $value) {
             $records[$key]['photo_url'] = imageUrl($value['eid']);
             $records[$key]['flag_url'] = flagURL($value['country']);
-            $records[$key]['flag_small_url'] = flag_small_url($value['country']);
           }
           jsonOutput(array(
             'sanitize'  => $Search->getLastSanitize(),
