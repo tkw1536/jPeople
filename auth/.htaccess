@@ -1,0 +1,4 @@
+<Files ~ "auth\.php|session_created\.php|session_invalid\.php|session_valid\.php$">
+  order Allow,Deny
+  deny from all
+</Files>

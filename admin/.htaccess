@@ -1,0 +1,4 @@
+<Files ~ "config\.php|01_pull_data\.php|02_insert_into_db\.php|update_footer\.html|update_header\.html|jP-data\.xml|jP-bDays\.dump$">
+  order Allow,Deny
+  deny from all
+</Files>
