@@ -8,12 +8,10 @@
 
   define( 'TABLE_RAWDATA', $config["mysql_table_rawdata"] );
   define( 'TABLE_SEARCH', $config["mysql_table_search"] );
-  define( 'TABLE_TRACKING', $config["mysql_table_track"]); 
 
   define( 'WEB_ROOT', 'http://localhost/jPeople/');
 
   require_once 'class.Search.php';
-  require_once 'utils/query.php';
 
   dbConnect( DB_USER, DB_PASS, DB_NAME );
 

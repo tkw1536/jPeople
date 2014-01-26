@@ -9,7 +9,6 @@
 
 		"mysql_table_rawdata" => "RawData", //Table for storing raw data
 		"mysql_table_search" => "Search", //Table for storing raw data
-		"mysql_table_track" => "Track", //Table for storing raw data
 
 		"session_timeout" => 24 * 60 * 60, //Session timeout in Seconds, default: 1 day
 		"session_created_redirect_timeout" => 1, //time to stay on the session created page in seconds, default: 1
