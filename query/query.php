@@ -1,208 +1,91 @@
 <?php
 
-function getSchools() {
-  $query = "SELECT * FROM Schools s";
-  $result = mysql_query($query) or die(mysql_error());
-  $schools = array();
+include(dirname(__FILE__)."/../admin/config.php");
+include(dirname(__FILE__)."/class.Search.php");
 
-  while ($row = mysql_fetch_assoc($result)) {
-    $schools[] = $row;
-  }
+//connect to the database
+mysql_connect($config["mysql_conn_host"], $config["mysql_conn_user"], $config["mysql_conn_pass"] ) or die ("DATABASE_CONN_FAIL");
+mysql_select_db($config["mysql_conn_db"]) or die ("DATABASE_SELECT_FAIL");
 
-  return $schools;
+//all important URLs
+function dataURL( $chr ){
+  return "http://swebtst01.public.jacobs-university.de/jPeople/ldap/xml_people_search.php?limit=10000&search=".$chr."&filter=all";
 }
 
-function getMajorsBySchool($schoolid) {
-  $query = sprintf('SELECT m.id, m.name '
-      . ' FROM Majors m '
-      . ' JOIN Schools s ON s.id = "%d" '
-      . ' WHERE m.school_id = "%d"',
-      mysql_real_escape_string($schoolid),
-      mysql_real_escape_string($schoolid));
-  $result = mysql_query($query) or die(mysql_error());
-  $majors = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $majors[] = $row;
-  }
-
-  return $majors;
+function imageURL( $eid ){
+  return "http://swebtst01.public.jacobs-university.de/jPeople/image.php?id=" . $eid;
 }
 
-function getCoursesByMajor($majorid) {
-  $query = sprintf('SELECT c.id, c.name '
-    . ' FROM Courses c '
-    . ' JOIN Structure s ON s.mid = "%d"'
-    . ' WHERE s.cid = c.id',
-    mysql_real_escape_string($majorid));
-  $result = mysql_query($query) or die(mysql_error());
-  $courses = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $courses[] = $row;
-  }
-
-  return $courses;
+function flagURL( $country ){
+  $country = str_replace( " ", '%20', $country );
+  return "http://swebtst01.public.jacobs-university.de/jPeople/embed_assets/flags/" . $country . ".png";
 }
 
-function getProfessorsByMajor($majorid) {
-  $query = sprintf('SELECT DISTINCT(p.id), p.name '
-      . ' FROM Professors p, Courses c '
-      . ' JOIN Structure s ON s.mid = "%d" '
-      . ' JOIN Teaching t ON t.cid = s.cid '
-      . ' WHERE t.pid = p.id ',
-      mysql_real_escape_string($majorid));
-  $result = mysql_query($query) or die(mysql_error());
-  $professors = array();
+//columns
+$map = array(
+  'employeeid'                  => 'eid',
+  'company'                     => 'employeetype',
+  'samaccountname'              => 'account',
+  'employeetype'                => 'attributes',
+  'givenname'                   => 'fname',
+  'sn'                          => 'lname',
+  'displayname'                 => 'displayname',
+  'name'                        => 'name',
+  'cn'                          => 'cn',
+  'houseidentifier'             => 'college',
+  'extensionattribute2'         => 'majorinfo',
+  'extensionattribute3'         => 'majorlong',
+  'extensionattribute5'         => 'country',
+  'mail'                        => 'email',
+  'roomInfo'                    => 'room',
+  'telephonenumber'             => 'phone',
+  'description'                 => 'description',
+  'title'                       => 'title',
+  'physicaldeliveryofficename'  => 'office',
+  'department'                  => 'department',
+  'wwwhomepage'                 => 'www',
+  'jpegphoto'                   => 'photo',
+  'deptInfo'                    => 'deptinfo'
+  );
 
-  while ($row = mysql_fetch_assoc($result)) {
-    $professors[] = $row;
+$search = array(
+  'eid', 'employeetype', 'account', 'attributes', 'fname', 'lname', 'birthday', 'country', 'college', 'majorlong', 'majorinfo', 'room', 'phone', 'email', 'description', 'title', 'office', 'deptinfo'
+  );
+
+$search_query = array(
+  'fname', 'lname', 'college', 'room', 'phone', 'country', 'major', 'birthday', 'year', 'status'
+  );
+
+$searchable_columns = array(
+  'employeetype', 'account', 'attributes', 'fname', 'lname', 'birthday', 'country', 'college', 'majorlong', 'majorinfo', 'room', 'phone', 'description', 'title', 'office', 'deptinfo', 'major', 'block', 'floor', 'email', 'year', 'status'
+  );
+
+
+//lib functions
+function jsonOutput( array $arr ){
+  if( !headers_sent() ){
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    header('Content-type:application/json');
+    header('Content-attributes: application/json; charset=ISO-8859-15');
   }
-
-  return $professors;
+  exit( json_encode( $arr ) );
 }
 
-function getCoursesByProfessor($professorid) {
-  $query = sprintf('SELECT c.id, c.name '
-      . ' FROM Courses c '
-      . ' JOIN Teaching t ON t.pid = "%d"'
-      . ' WHERE t.cid = c.id',
-      mysql_real_escape_string($professorid));
-  $result = mysql_query($query) or die(mysql_error());
-  $courses = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $courses[] = $row;
+function sqlToArray( $sql, $key = null ){
+  if( $sql ){
+    $a = array();
+    while( $r = mysql_fetch_assoc( $sql ) ){
+      if( $key ){
+        $a[ $r[ $key ] ] = $r;
+      } else {
+        $a[] = $r;
+      }
+    }
+    return $a;
+  } else {
+    return array();
   }
-
-  return $courses;
-}
-
-function getProfessorsByCourse($courseid) {
-  $query = sprintf('SELECT p.id, p.name '
-      . ' FROM Professors p'
-      . ' JOIN Teaching t ON t.cid = "%d"'
-      . ' WHERE t.pid = p.id',
-      mysql_real_escape_string($courseid));
-  $result = mysql_query($query) or die(mysql_error());
-  $professors = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $professors[] = $row;
-  }
-
-  return $professors;
-}
-
-function getCourseInformation($courseid) {
-  $query = sprintf('SELECT c.id, c.number, c.name, c.description'
-      . ' FROM Courses c '
-      . ' WHERE c.id = "%d" ',
-      mysql_real_escape_string($courseid));
-  $result = mysql_query($query) or die(mysql_error());
-  $course = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $course = $row;
-  }
-
-  if (!empty($course)) {
-    $course["professors"] = getProfessorsByCourse($courseid);
-    $course["students"]   = getStudentsByCourse($courseid);
-  }
-
-  return $course;
-}
-
-function getProfessorInformation($professorid) {
-  $query = sprintf('SELECT p.id, p.name'
-      . ' FROM Professors p '
-      . ' WHERE p.id = "%d" ',
-      mysql_real_escape_string($professorid));
-  $result = mysql_query($query) or die(mysql_error());
-  $professor = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $professor = $row;
-  }
-
-  if (!empty($professor)) {
-    $professor["courses"] = getCoursesByProfessor($professorid);
-  }
-
-  return $professor;
-}
-
-function getMajorInformation($majorid) {
-  $query = sprintf('SELECT m.id, m.name'
-      . ' FROM Majors m '
-      . ' WHERE m.id = "%d" ',
-      mysql_real_escape_string($majorid));
-  $result = mysql_query($query) or die(mysql_error());
-  $major = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $major = $row;
-  }
-
-  if (!empty($major)) {
-    $major["courses"] = getCoursesByMajor($majorid);
-  }
-
-  return $major;
-}
-
-function getSchoolInformation($schoolid) {
-  $query = sprintf('SELECT s.id, s.name'
-      . ' FROM Schools s '
-      . ' WHERE s.id = "%d" ',
-      mysql_real_escape_string($schoolid));
-  $result = mysql_query($query) or die(mysql_error());
-  $school = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $school = $row;
-  }
-
-  if (!empty($school)) {
-    $school["majors"] = getMajorsBySchool($schoolid);
-  }
-
-  return $school;
-}
-
-function getCoursesByStudent($eid) {
-  $query = sprintf('SELECT c.id, c.number, c.name '
-      . ' FROM Courses c, Studying st, RawData raw '
-      . ' WHERE st.sid = raw.id '
-      . ' AND c.id = st.cid '
-      . ' AND raw.eid = "%d" ',
-      mysql_real_escape_string($eid));
-  $result = mysql_query($query) or die(mysql_error());
-  $courses = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $courses[] = $row;
-  }
-
-  return $courses;
-}
-
-function getStudentsByCourse( $courseid ){
-  $query = sprintf('SELECT raw.id, raw.eid, raw.fname, raw.lname '
-      . ' FROM Courses c, Studying st, RawData raw '
-      . ' WHERE st.sid = raw.id '
-      . ' AND c.id = st.cid '
-      . ' AND c.id = "%d" ',
-      mysql_real_escape_string($courseid));
-  $result = mysql_query($query) or die(mysql_error());
-  $courses = array();
-
-  while ($row = mysql_fetch_assoc($result)) {
-    $courses[] = $row;
-  }
-
-  return $courses;
 }
 
 ?>

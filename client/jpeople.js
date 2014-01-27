@@ -32,7 +32,7 @@ var jpeople_attr_map = {
 	"attributes": "attributes",
 	"fname": "fname",
 	"lname": "lname",
-	"birthday": "birthday",
+	"birthday": "birthday", 
 	"country": "country",
 	"college": "college",
 	"majorlong": "majorlong",

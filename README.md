@@ -12,17 +12,17 @@ Still in really early stages.
 
 ## Setup
 
-* Set up settings in admin/config.php
-* Upload files to the webserver; make sure the server has access to the jacobs network
-* you may want to delete README.md
-* go to 'http://example.com/jpeople/admin/' and enter the admin username and password. Then update the Database. 
-* enjoy jpeople working!
-
+* Upload the files to your webserver. Make sure the admin/ and query/ directories are writable by the webserver. 
+* Navigate to: 'http://example.com/jpeople/admin/'
+* Login with the username 'admin' and an empty password. 
+* Update the settings. 
+* Update the database. 
+* Enjoy jPeople working!
 ## Structure
 
-* 'admin/' - Admin interface for updating database, contains code adapted from the old implementation. 
+* 'admin/' - Admin interface. Mostly for updating the DB. Should be writable by the webserver. 
 * 'auth/' - Authorisation with CampusNet (if enabled)
-* 'query/' - Files used to query, contains code adapted from the old implementation. 
+* 'query/' - Files used to query. Should be writable by the webserver. 
 * 'client/' - Files for the client, written in JavaScript. 
 * '/index.php' - Main client
 * '/ajax.php' - Client for ajax requests
