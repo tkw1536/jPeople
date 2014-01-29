@@ -53,9 +53,8 @@
 	}
 
 	function is_pass_valid($user, $pass){
-		$admin_master_username = "admin"; 
-		$admin_master_pass = ""; 
-		return ($user == $admin_master_username && $pass == $admin_master_pass) || check_ldap_pass($user, $pass); 
+		$config = $GLOBALS["config"]; 
+		return ($user == $config["admin_username"] && $pass == $config["admin_pass"]) || check_ldap_pass($user, $pass); 
 	}
 
 	function requires_login(){
@@ -71,7 +70,7 @@
 
 	function require_valid_session(){
 		if(!is_session_valid()){
-			include "404.php"; 
+			include "401.php"; 
 			die(); 
 		}
 	}

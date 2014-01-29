@@ -6,7 +6,7 @@
 	$REQ_PASS = $config["admin_pass"]; 
 
 	function show_login_page($msg = ""){
-		include "update_header.html"; 
+		include "header.php"; 
 		echo $msg; 
 		echo "<form method='post' role='form'>"; 
 		echo "<input type='hidden' value='true' name='login'>"; 
@@ -14,7 +14,7 @@
 		echo "<input type='password' value='' name='pass' class='form-control' placeholder='Password'><br/>"; 
 		echo '<input type="submit" value="Login" class="btn btn-default">'; 
 		echo "</form>"; 
-		include "update_footer.html";
+		include "footer.php";
 	}
 
 	if(!@$_POST["login"]){
@@ -30,7 +30,7 @@
 
 		if(@$_POST["db_step"]){
 			if(@$_POST["db_step"] == "1"){
-				include "update_header.html"; 
+				include "header.php"; 
 				echo "<h2>Updating Database - Step 1/2</h2>"; 
 				echo "<pre>"; 
 				include(dirname(__FILE__)."/../query/query.pull_data.php");
@@ -44,9 +44,9 @@
 				echo '<input type="submit" value="Step 2" class="btn btn-default">'; 
 				echo "</form>";
 
-				include "update_footer.html"; 
+				include "footer.php"; 
 			} else if(@$_POST["db_step"] == "2"){
-				include "update_header.html"; 
+				include "header.php"; 
 
 				echo "<h2>Updating Database - Step 2/2</h2>";
 				echo "<pre>"; 
@@ -60,16 +60,16 @@
 				echo '<input type="submit" value="Back to admin page" class="btn btn-default">'; 
 				echo "</form>";  
 
-				include "update_footer.html"; 
+				include "footer.php"; 
 			} else {
-				include "update_header.html"; 
+				include "header.php"; 
 				echo '<div class="alert alert-danger">Error: Unknown DB step value. </div>'; 
-				include "update_footer.html"; 
+				include "footer.php"; 
 			}
 
 		} else if(@$_POST["config_store"]){
 			//Unimplemented: Config page
-			include "update_header.html"; 
+			include "header.php"; 
 
 			include(dirname(__FILE__)."/config.php");
 
@@ -197,12 +197,12 @@
 			echo '</div>'; 
 			echo "</form>";
 
-			include "update_footer.html";
+			include "footer.php";
 		} else if(@$_POST["test_db"]){
 			//test settings
 
 			include "config.php"; 
-			include "update_header.html";
+			include "header.php";
 
 			echo "<h2>Checking database connection. </h2>";
 
@@ -233,10 +233,10 @@
 			echo '</div>'; 
 			echo "</form>";
 
-			include "update_footer.html";
+			include "footer.php";
 
 		} else {
-			include "update_header.html"; 
+			include "header.php"; 
 
 			//config
 			echo "<form method='post' role='form'>"; 
@@ -284,7 +284,7 @@
 			echo '</div>'; 
 			echo "</form>";
 
-			include "update_footer.html";
+			include "footer.php";
 		}
 	}
 ?>

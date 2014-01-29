@@ -1,4 +1,4 @@
-<Files ~ "config\.php|update_footer\.html|update_header\.html|config\.json$">
+<Files ~ "config\.php|header\.php|footer\.php|config\.json$">
   order Allow,Deny
   deny from all
 </Files>
