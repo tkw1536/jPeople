@@ -25,7 +25,7 @@
 		$pass = $_POST["store_admin_pass"]; 
 
 			//write the changed settings to a file. 
-		$code = json_encode($config, JSON_PRETTY_PRINT);
+		$code = json_encode($config);
 		$res = @file_put_contents(dirname(__FILE__)."/../config.json", $code) or false; 
 
 		if($res){
