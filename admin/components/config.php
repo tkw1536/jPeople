@@ -26,7 +26,7 @@
 
 			//write the changed settings to a file. 
 		$code = json_encode($config, JSON_PRETTY_PRINT);
-		$res = @file_put_contents(dirname(__FILE__)."/config.json", $code) or false; 
+		$res = @file_put_contents(dirname(__FILE__)."/../config.json", $code) or false; 
 
 		if($res){
 			?><div class="alert alert-success">Settings updated. </div><?php

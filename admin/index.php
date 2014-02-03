@@ -23,7 +23,7 @@
 
 		$user = $_POST["user"]; 
 		$pass = $_POST["pass"]; 
-		if($user != $REQ_USER && $pass != $REQ_PASS){
+		if($user != $REQ_USER or $pass != $REQ_PASS){
 			show_login_page('<div class="alert alert-danger">Access denied</div>'); 
 		} else if(@$_POST["db_step"]){
 

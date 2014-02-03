@@ -4,7 +4,7 @@
 	<input type='hidden' value='no' name='config_store'> 
 	<input type='hidden' value='true' name='login'> 
 	<input type='hidden' value='<?php echo $user; ?>' name='user'> 
-	<input type='hidden' value='<?php echo $user; ?>' name='pass'> 
+	<input type='hidden' value='<?php echo $pass; ?>' name='pass'> 
 	<div class="btn-group">
 		<input type="submit" value="Configuration" class="btn btn-default">
 		<button class='btn btn-warning disabled'>May effect functionality. </button>
@@ -30,7 +30,7 @@
 	<input type='hidden' value='1' name='db_step'> 
 	<input type='hidden' value='true' name='login'> 
 	<input type='hidden' value='<?php echo $user; ?>' name='user'> 
-	<input type='hidden' value='<?php echo $user; ?>' name='pass'> 
+	<input type='hidden' value='<?php echo $pass; ?>' name='pass'> 
 	<div class="btn-group">
 		<input type="submit" value="Update Database" class="btn btn-default">
 		<button class='btn btn-warning disabled'>This may take a while. </button>
