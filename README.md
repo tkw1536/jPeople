@@ -18,6 +18,7 @@ Still in really early stages.
 * Update the settings. 
 * Update the database. 
 * Enjoy jPeople working!
+
 ## Structure
 
 * 'admin/' - Admin interface. Mostly for updating the DB. Should be writable by the webserver. 

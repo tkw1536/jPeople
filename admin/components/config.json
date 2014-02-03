@@ -1,7 +1,7 @@
 {
     "mysql_conn_host": "localhost",
     "mysql_conn_user": "root",
-    "mysql_conn_pass": "",
+    "mysql_conn_pass": "root",
     "mysql_conn_db": "jpeople",
     "mysql_conn_table": "search",
     "session_timeout": 86400,
