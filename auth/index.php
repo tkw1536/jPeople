@@ -1,7 +1,7 @@
 <?php
 	include "auth.php"; 
 	
-	if(is_session_valid()){
+	if(!@$_POST["username"] && is_session_valid()){
 		if(@$_GET["do"] == "logout"){
 			session_remove(); 
 			$auth_message = "You have been logged out! "; 

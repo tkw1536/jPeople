@@ -3,6 +3,10 @@
 
 	include(dirname(__FILE__)."/../admin/config.php");
 
+	function startsWith($haystack, $needle)
+	{
+	    return $needle === "" || strpos($haystack, $needle) === 0;
+	}
 
 	function is_session_valid(){
 		//Check if a given session (on this server) is correct
@@ -20,6 +24,7 @@
 				$_SESSION['init'] = false; 
 				$_SESSION['timeout'] = 0; 
 				$_SESSION['user'] = ""; 
+				return true; 
 			}
 		}
 	}
@@ -65,6 +70,14 @@
 				return true; 
 			}
 		}
+
+		$IP = $_SERVER["REMOTE_ADDR"];
+		foreach($GLOBALS["config"]["allow_ips"] as $str){
+			if(startsWith($IP, $str) || $IP == $str){
+				return false; 
+			}
+		}
+
 		return !$GLOBALS["config"]["disable_campusnet_login"]; 
 	}
 

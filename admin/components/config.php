@@ -19,6 +19,7 @@
 		$config["admin_pass"] = $_POST["store_admin_pass"]; 
 
 		$config["server_path"] = $_POST["store_server_path"];
+		$config["allow_ips"] = explode(";", $_POST["store_allow_ips"]);
 
 			//update live credentials
 		$user = $_POST["store_admin_username"]; 
@@ -104,6 +105,11 @@
 			</div>
 
 		</div>
+
+		<br />
+
+		<label for="store_server_path">Allow the following (partial) ips without login (seperate by ;) : </label>
+		<input type="text" class="form-control" placeholder="" id="store_allow_ips" value='<?php echo implode(";", $config["allow_ips"]);  ?>' name='store_allow_ips'>
 	</div>
 
 	<h3>Admin settings</h3>
