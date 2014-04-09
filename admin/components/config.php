@@ -19,7 +19,13 @@
 		$config["admin_pass"] = $_POST["store_admin_pass"]; 
 
 		$config["server_path"] = $_POST["store_server_path"];
-		$config["allow_ips"] = explode(";", $_POST["store_allow_ips"]);
+
+		//allow ips if empty
+		if($_POST["store_allow_ips"] == ""){
+			$config["allow_ips"] = array();
+		} else {
+			$config["allow_ips"] = explode(";", $_POST["store_allow_ips"]);
+		}
 
 			//update live credentials
 		$user = $_POST["store_admin_username"]; 
