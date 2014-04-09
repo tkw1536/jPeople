@@ -77,3 +77,11 @@ body {
     border-bottom: 0;
   }
 }
+
+img.resimg {
+  max-width: 100%; 
+}
+
+div.resdiv {
+  max-width: 100%; 
+}

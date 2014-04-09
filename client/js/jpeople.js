@@ -144,5 +144,3 @@ self.main = function(query){
 
 window.jpeople = self; 
 })(); 
-
-console.log(window.jpeople); 
