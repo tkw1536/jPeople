@@ -217,7 +217,7 @@ function makeQuery( array $arr ){
 function getValues( $person, $map ){
   $vals = array();
   foreach( $map as $k => $v ){
-    $vals[$v] = $person->getElementsByTagName($k)->item(0)->textContent;
+    $vals[$v] = utf8_decode($person->getElementsByTagName($k)->item(0)->textContent);
   }
   return $vals;
 }
